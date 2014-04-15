@@ -1,0 +1,20 @@
+private String[] makeArray() {
+		Scanner scan = new Scanner(getResources().openRawResource(R.raw.hubble));
+		ArrayList<String> wordsArrayList = new ArrayList<String>();
+		while(scan.hasNext()){
+			String line = scan.nextLine();
+			String word = "";
+			for(int c=0; c<line.length(); c++){
+				if(Character.isLetter(line.charAt(c)))
+					word += line.charAt(c);
+				else{
+					wordsArrayList.add(word);
+					word = "";
+				}	//end if
+			}	//end for
+		}   //end while
+		scan.close();
+		String[] wordsArray = new String[wordsArrayList.size()];
+		wordsArrayList.toArray(wordsArray);	
+		return wordsArray;
+}
