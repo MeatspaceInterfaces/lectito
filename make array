@@ -1,4 +1,4 @@
-	private String[] makeArray() {
+private String[] makeArray() {
 		Scanner scan = new Scanner(getResources().openRawResource(R.raw.hubble));
 		ArrayList<String> wordsArrayList = new ArrayList<String>();
 		final int MAX_LENGTH = 20;
@@ -10,9 +10,9 @@
 					wordsArrayList.add(word);
 					word = "";
 				}
-				if(Character.isLetter(c) || Character.isDigit(c) || c=='-')
+				if(Character.isLetterOrDigit(c) || c=='-' || c=='$' || c=='%' || c=='@' || c=='#')
 					word += c;
-				else if(c=='.' || c=='!' ||c=='?'){
+				else if(c=='.' || c=='!' ||c=='?' ||c==':'){
 					word += c;
 					wordsArrayList.add(word);
 					wordsArrayList.add(word);
