@@ -1,0 +1,103 @@
+package meatspaceInterfaces.lectito;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+
+public class ReaderFragment extends Fragment 
+{
+	private Button mFasterButton;
+	private Button mSlowerButton;
+	
+	private static final String KEY_INDEX = "index";
+	boolean paused = false; // needs a way to be controlled (pause button)
+	int mCurrentIndex = 0; // index of which word in the Words[]
+	Words[] mWordsArray = new Words[] { // needs a way to be loaded
+			new Words("testing1"), 
+			new Words("testing2"), 
+			new Words("testing3"), 
+			new Words("testing4"), 
+			new Words("testing5"), 
+			new Words("testing6"), 
+			new Words("testing7"), 
+			new Words("testing8"), 
+			new Words("testing9"),
+			new Words("testing10"),
+			new Words("testing11"),
+			new Words("testing12"),
+			new Words("testing11"),
+			new Words("testing12"),
+			new Words("still") 
+	};
+	TextView mWordTextView; // the view on screen of the word
+	private Handler handler = new Handler();
+	private Runnable updateWord = new Runnable() {
+		@Override
+		public void run() { // this runnable updates the word
+			mCurrentIndex = (mCurrentIndex + 1); // increment index
+			mWordTextView.setText(mWordsArray[mCurrentIndex].getWord());
+			if (mCurrentIndex < mWordsArray.length-1) // check if end of array
+				handler.postDelayed(updateWord, myPeriod);
+		}
+	};
+	int myDelay = 1000; // needs a way to be set by user
+	int myPeriod = 500; // needs a way to be set by user
+	
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+		handler.postDelayed(updateWord, myDelay); //do it
+		
+	}
+	
+	
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState)
+	{
+		View v = inflater.inflate(R.layout.fragment_reader, parent, false);
+		mFasterButton = (Button) v.findViewById(R.id.read_faster_button);
+		mSlowerButton = (Button) v.findViewById(R.id.read_slower_button);
+		mWordTextView = (TextView) v.findViewById(R.id.word_text_view);
+		mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+		
+		mFasterButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				myPeriod = myPeriod - 10;
+				
+			}
+		});
+		
+		mSlowerButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				myPeriod = myPeriod + 10;
+				
+			}
+		});
+		
+		return v;
+	}
+	
+	public static ReaderFragment newInstance(){
+		Bundle args = new Bundle();
+		ReaderFragment fragment = new ReaderFragment();
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
+	public void onDestroy()
+	{
+		super.onDestroy();
+	}
+	
+	
+}
