@@ -1,0 +1,62 @@
+package meatspaceInterfaces.lectito;
+
+import java.util.UUID;
+
+
+
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+
+public class MainActivity extends FragmentActivity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.fragment_reader);
+	}
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		
+	}
+
+} // end class
