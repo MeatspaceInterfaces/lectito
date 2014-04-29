@@ -1,0 +1,245 @@
+package meatspaceInterfaces.lectito;
+
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+	private static final String TAG = "MainActivity";
+	private static final String KEY_INDEX = "index";
+	
+	private Button mFasterButton;
+	private Button mSlowerButton;
+	private Button mSmallSize;
+	private Button mMediumSize;
+	private Button mLargeSize;
+	
+	
+	boolean paused = false; // needs a way to be controlled (pause button)
+	int mCurrentIndex = 0; // index of which word in the Words[]
+	//WordList mWords = new WordList();
+	
+	//int ArraySize = mWords.getWordsArray().size();
+	
+	
+	String[] mWordsArray = makeArray();
+//	mWordsArray = mWords.getWordsArray().toArray();
+
+//	Words[] mWordsArray = new Words[] { // needs a way to be loaded
+//			new Words("testing1"), 
+//			new Words("testing2"), 
+//			new Words("testing3"), 
+//			new Words("testing4"), 
+//			new Words("testing5"), 
+//			new Words("testing6"), 
+//			new Words("testing7"), 
+//			new Words("testing8"), 
+//			new Words("testing9"),
+//			new Words("testing10"),
+//			new Words("testing11"),
+//			new Words("testing12"),
+//			new Words("testing13"),
+//			new Words("testing14"),
+//			new Words("testing15"),
+//			new Words("testing16"),
+//			new Words("testing17"),
+//			new Words("testing18"),
+//			new Words("testing19"),
+//			new Words("testing20"),
+//			new Words("testing21"),
+//			new Words("testing22"),
+//			new Words("testing23"),
+//			new Words("testing24"),
+//			new Words("testing25"),
+//			new Words("testing26"),
+//			new Words("testing27"),
+//			new Words("still") 
+//	};
+
+	TextView mWordTextView; // the view on screen of the word
+	TextView mWordsPerMinuteView;
+	
+	int myDelay = 1000; // needs a way to be set by user
+	int myPeriod = 400;
+	double wpm = 60000/myPeriod;
+	
+	
+	private Handler handler = new Handler();
+	private Runnable updateWord = new Runnable() {
+		@Override
+		public void run() { // this runnable updates the word
+			
+			mCurrentIndex = (mCurrentIndex + 1); // increment index
+			mWordTextView.setText(mWordsArray[mCurrentIndex]); 
+			wpm = 60000/myPeriod;
+			mWordsPerMinuteView.setText("" + Math.round(wpm));
+			if (mCurrentIndex < mWordsArray.length-1) // check if end of array
+				if(!paused)
+				{
+					handler.postDelayed(updateWord, myPeriod);
+				}
+				
+		}
+	};
+
+	
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null) //check for continue of previous session
+			mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+		setContentView(R.layout.activity_main);
+		mWordTextView = (TextView) findViewById(R.id.word_text_view);
+		mWordsPerMinuteView = (TextView) findViewById(R.id.words_per_minute);
+		handler.postDelayed(updateWord, myDelay); 
+
+		mWordTextView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(updateWord != null){
+					//onPause();
+					if(paused){
+						paused = false;
+						handler.postDelayed(updateWord, 0);//do it again
+						// 0=> not wait
+					}
+					else{
+						paused = true;
+					}
+				}
+				else{
+					onResume();
+				}
+			}
+		});
+		
+		mSmallSize = (Button) findViewById(R.id.smallSize);
+		mSmallSize.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+					mWordTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
+			}
+		});
+		
+		mMediumSize = (Button) findViewById(R.id.mediumSize);
+		mMediumSize.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+					mWordTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 45);
+			}
+		});
+		
+		mLargeSize = (Button) findViewById(R.id.largeSize);
+		mLargeSize.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				mWordTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 70);
+			}
+		});
+		
+		
+		mFasterButton = (Button) findViewById(R.id.read_faster_button);
+		mFasterButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "Faster Button Pressed");
+				if(myPeriod > 10)
+				{
+					Log.d(TAG, "Faster Button Pressed");
+					wpm = 60000/myPeriod;
+					myPeriod -= 10;
+					mWordsPerMinuteView.setText("" + Math.round(wpm));
+				}	
+			}
+		});
+		
+		
+		mSlowerButton = (Button) findViewById(R.id.read_slower_button);
+		mSlowerButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "Slower Button Pressed");
+				wpm = 60000/myPeriod;
+				myPeriod+=10;
+				mWordsPerMinuteView.setText("" + Math.round(wpm));
+				
+			}
+		});
+		
+	}
+
+	private String[] makeArray() {
+		ArrayList<String> wordsArrayList = new ArrayList<String>();
+		wordsArrayList.add("TESTING1");
+		wordsArrayList.add("TESTING2");
+		wordsArrayList.add("TESTING3");
+		String[] mArray = new String[wordsArrayList.size()];
+		wordsArrayList.toArray(mArray);
+		return mArray;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		Log.i(TAG, "onSaveInstanceState");
+		savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+	}
+
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		Log.i(TAG, "onRestoreInstanceState");
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		Log.d(TAG, "onStarted() called");
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		Log.d(TAG, "onPause() called");
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Log.d(TAG, "onResume() called");
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		Log.d(TAG, "onStop() called");
+	}
+
+} // end class
